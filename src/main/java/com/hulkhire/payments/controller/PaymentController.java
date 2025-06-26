@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.hulkhire.payments.constant.constant.PAYMENT_REQ;
+
 @Slf4j
 @RestController
-@RequestMapping("/payments")
+@RequestMapping(PAYMENT_REQ)
 public class PaymentController {
 private Logger logger= LoggerFactory.getLogger(PaymentController.class);
 
