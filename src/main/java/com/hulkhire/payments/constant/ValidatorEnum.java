@@ -39,7 +39,6 @@ public enum ValidatorEnum {
         return validatorClass;
     }
 
-    /** ✅ Method to get validator class from string name */
     public static Class<? extends Validator> getClassByName(String name) {
         ValidatorEnum type = NAME_TO_ENUM_MAP.get(name);
         return type.validatorClass;
