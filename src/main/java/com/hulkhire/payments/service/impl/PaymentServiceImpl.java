@@ -1,6 +1,7 @@
 package com.hulkhire.payments.service.impl;
 
 import com.hulkhire.payments.constant.ValidatorEnum;
+import com.hulkhire.payments.exception.ValidationException;
 import com.hulkhire.payments.pojo.PaymentRequest;
 import com.hulkhire.payments.pojo.PaymentResponse;
 import com.hulkhire.payments.service.PaymentService;
@@ -26,6 +27,12 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     public PaymentResponse createPayment(PaymentRequest paymentRequest) {
+
+
+
+
+        int len=   paymentRequest.getPaymentMethod().length();
+
         logger.info("Received Payment Details: {}",paymentRequest);
         PaymentResponse paymentResponse=new PaymentResponse();
         paymentResponse.setId("1234");
