@@ -1,55 +1,75 @@
-package com.hulkhire.payments.service.impl;
+package com.hulkhiretech.payments.service.impl;
 
-import com.hulkhire.payments.constant.ValidatorEnum;
-import com.hulkhire.payments.exception.ValidationException;
-import com.hulkhire.payments.pojo.PaymentRequest;
-import com.hulkhire.payments.pojo.PaymentResponse;
-import com.hulkhire.payments.service.PaymentService;
-import com.hulkhire.payments.service.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.hulkhiretech.payments.constant.ValidatorEnum;
+import com.hulkhiretech.payments.pojo.PaymentRequest;
+import com.hulkhiretech.payments.pojo.PaymentResponse;
+import com.hulkhiretech.payments.service.interfaces.PaymentService;
+import com.hulkhiretech.payments.service.interfaces.Validator;
+
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
-public class PaymentServiceImpl implements PaymentService{
-
-    @Autowired
-    private ApplicationContext context;
-
-    private Logger logger= LoggerFactory.getLogger(PaymentServiceImpl.class);
-
-    @Value("${validator.rules}")
+@Slf4j
+public class PaymentServiceImpl implements PaymentService {
+	
+	@Value("${validator.rules}")
     private String validationRules;
+	
+	private ApplicationContext applicationContext;
+	
+	@Value("${mytestkey}")
+	private String mytestkey;
+	
+	public PaymentServiceImpl(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
-
-    @Override
-    public PaymentResponse createPayment(PaymentRequest paymentRequest) {
-
-
-
-
-        int len=   paymentRequest.getPaymentMethod().length();
-
-        logger.info("Received Payment Details: {}",paymentRequest);
-        PaymentResponse paymentResponse=new PaymentResponse();
-        paymentResponse.setId("1234");
-        paymentResponse.setRedirectUrl("www.google.com"+paymentRequest.getId());
-        logger.info("Payment Response"+paymentResponse);
-
-        //Validation Check
-
-        String[] rules=validationRules.split(",");
-
-        for(String rule:rules){
-            logger.info("VALIDATION CHECK : {}",rule);
-             Class<? extends Validator>validatorClass=ValidatorEnum.getClassByName(rule);
-            Validator validatorbean=context.getBean(validatorClass);
-            logger.info("Validator Bean Retrieved: {} ",validatorbean.getClass().getSimpleName());
-        }
-
-        return paymentResponse;
-    }
+	@Override
+	public PaymentResponse createPayment(PaymentRequest paymentDetails) {
+		log.info("Received payment details: {}", paymentDetails);
+		
+		// Split the validation rules and process each validator
+		String[] rules = validationRules.split(",");
+		for (String rule : rules) {
+			log.info("Applying validation rule: {}", rule);
+			
+			Class<? extends Validator> validatorClass = 
+					ValidatorEnum.getValidatorClassByName(rule);
+			
+			Validator validatorBean = null;
+			if (validatorClass != null) {
+				validatorBean = applicationContext.getBean(validatorClass);
+			}
+			
+			if (validatorBean == null || validatorClass == null) {
+				log.warn("Validator not found for rule: {}", rule);
+				continue; // Skip if validator not found
+			}
+			
+			log.info("Validator bean retrieved: {}", 
+					validatorBean.getClass().getSimpleName());
+			validatorBean.validate(paymentDetails);
+			
+		}
+		
+		//TODO this is temporary, replace with actual functional values.
+		PaymentResponse paymentResponse = new PaymentResponse();
+		paymentResponse.setId("12345");
+		paymentResponse.setRedirectUrl(
+				"https://example.com/redirect?paymentId=" 
+		+ paymentResponse.getId());
+		
+		log.info("Payment response created: {}", paymentResponse);
+		return paymentResponse;
+	}
+	
+	@PostConstruct
+	public void init() {
+		log.info("****Calling init() mytestkey:{}", mytestkey);
+	}
 }

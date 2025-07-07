@@ -1,4 +1,4 @@
-package com.hulkhire.payments.controller;
+package com.hulkhiretech.payments.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ public class AdditionController {
     @PostMapping("/add")
     public int add(@RequestParam int num1, @RequestParam int num2) {
         logger.info("num1:{}|num2:{}", num1, num2);
-
+        
         int sumResult = num1 + num2;
         logger.info("sumResult:{}", sumResult);
 

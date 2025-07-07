@@ -1,7 +1,11 @@
-package com.hulkhire.payments.constant;
+package com.hulkhiretech.payments.constant;
 
-public class constant {
-
-    public static final String PAYMENT_REQ="/payments";
+public class Constant {
+	
+	private Constant() {}
+	
+	public static final String PAYMENTS_ENDPOINT = "/payments";
+	
+	public static final String HMAC_SIGNATURE = "hmac-signature";
 
 }

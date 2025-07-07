@@ -1,48 +1,38 @@
-package com.hulkhire.payments.controller;
+package com.hulkhiretech.payments.controller;
 
-import com.hulkhire.payments.exception.ValidationException;
-import com.hulkhire.payments.pojo.PaymentRequest;
-import com.hulkhire.payments.pojo.PaymentResponse;
-import com.hulkhire.payments.service.HMacSHA256Service;
-import com.hulkhire.payments.service.PaymentService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hulkhiretech.payments.constant.Constant;
+import com.hulkhiretech.payments.pojo.PaymentRequest;
+import com.hulkhiretech.payments.pojo.PaymentResponse;
+import com.hulkhiretech.payments.service.interfaces.HMacSHA256Service;
+import com.hulkhiretech.payments.service.interfaces.PaymentService;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import static com.hulkhire.payments.constant.constant.PAYMENT_REQ;
-
-@Slf4j
 @RestController
-@RequestMapping(PAYMENT_REQ)
+@RequestMapping(Constant.PAYMENTS_ENDPOINT)
+@Slf4j
+@RequiredArgsConstructor
 public class PaymentController {
-    private Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
-    @Autowired
-    private PaymentService service;
+	private final PaymentService paymentService;
+	
+	@PostMapping
+	public PaymentResponse createPayment(
+			@RequestBody PaymentRequest paymentDetails) {
+		log.info("Received paymentDetails: {}", paymentDetails);
 
-    @Autowired
-    private HMacSHA256Service hMacSHA256Service;
+		// This method would typically handle payment creation logic
+		PaymentResponse response = paymentService.createPayment(paymentDetails);
 
-    @PostMapping
-    public ResponseEntity<PaymentResponse> createPayment
-            (@RequestBody PaymentRequest paymentRequest,
-             @RequestHeader(value = "sign-header",required = false)
-                                                         String hmacSignature) throws Exception {
+		log.info("Payment creation response: {}", response);
 
-        logger.info("recieved hmacSignature: {}",hmacSignature);
-        hMacSHA256Service.verifyHmacSignature(hmacSignature,paymentRequest);
+		return response;
+	}
 
-        logger.info("Recieved Payment Detais: {}", paymentRequest);
-        PaymentResponse details = service.createPayment(paymentRequest);
-        logger.info("Payment Creation Response: {}", details);
-
-
-        return new ResponseEntity<>(details, HttpStatus.CREATED);
-    }
 }

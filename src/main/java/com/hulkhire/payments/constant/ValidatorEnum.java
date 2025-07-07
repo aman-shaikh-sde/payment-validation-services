@@ -1,25 +1,25 @@
-package com.hulkhire.payments.constant;
-
-import com.hulkhire.payments.service.Validator;
-import com.hulkhire.payments.service.impl.validator.Check1Validator;
-import com.hulkhire.payments.service.impl.validator.Check2Validator;
+package com.hulkhiretech.payments.constant;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.hulkhiretech.payments.service.impl.validator.Check1Validator;
+import com.hulkhiretech.payments.service.impl.validator.Check2Validator;
+import com.hulkhiretech.payments.service.interfaces.Validator;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public enum ValidatorEnum {
 
-    CHECK1_VALIDATOR("CHECK1_VALIDATOR", Check1Validator.class),
-    CHECK2_VALIDATOR("CHECK2_VALIDATOR", Check2Validator.class);
+    CHECK1_VALIDATOR_RULE("CHECK1_VALIDATOR_RULE", Check1Validator.class),
+    CHECK2_VALIDATOR_RULE("CHECK2_VALIDATOR_RULE", Check2Validator.class);
 
     private final String name;
     private final Class<? extends Validator> validatorClass;
 
-    // Optimized static map for O(1) lookup
     private static final Map<String, ValidatorEnum> NAME_TO_ENUM_MAP = new HashMap<>();
 
-    // Static block to fill the map once
     static {
         for (ValidatorEnum type : values()) {
             NAME_TO_ENUM_MAP.put(type.name, type);
@@ -31,16 +31,13 @@ public enum ValidatorEnum {
         this.validatorClass = validatorClass;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Class<? extends Validator> getValidatorClass() {
-        return validatorClass;
-    }
-
-    public static Class<? extends Validator> getClassByName(String name) {
+    public static Class<? extends Validator> getValidatorClassByName(String name) {
         ValidatorEnum type = NAME_TO_ENUM_MAP.get(name);
+        if(type == null) {
+        	log.error("No validator found for name: {}", name);
+        	return null;
+        }
+        
         return type.validatorClass;
     }
 }
