@@ -8,7 +8,7 @@
 		<version>3.5.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.hulkhire</groupId>
+	<groupId>com.hulkhiretech</groupId>
 	<artifactId>payment-validation-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>payment-validation-service</name>
