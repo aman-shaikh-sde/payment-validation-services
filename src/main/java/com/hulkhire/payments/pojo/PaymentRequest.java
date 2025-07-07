@@ -16,7 +16,6 @@ public class PaymentRequest {
     private String currency; // e.g., INR, USD
     private String transactionId;
     private String paymentStatus; // e.g., SUCCESS, FAILED, PENDING
-    private LocalDateTime paymentDate;
     private Long userId;
 
 }
